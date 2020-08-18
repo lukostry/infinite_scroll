@@ -16,6 +16,10 @@ interface Action {
   payload: Array<Offer>;
 }
 
+export enum OffersActionType {
+  FetchedOffers = 'FETCHED_OFFERS',
+}
+
 const initialState: OffersState = {
   loading: false,
   offers: []
@@ -23,7 +27,7 @@ const initialState: OffersState = {
 
 const offersReducer = (state: OffersState = initialState, action: Action): OffersState => {
   switch (action.type) {
-    case 'FETCHED_OFFERS':
+    case OffersActionType.FetchedOffers:
       return { loading: false, offers: [...state.offers, ...action.payload] };
     default:
       return state;

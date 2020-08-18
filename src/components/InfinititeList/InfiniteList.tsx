@@ -17,6 +17,8 @@ export const InfiniteList: React.SFC<InfiniteListProps> = ({ children, onLoadMor
 
   const handleScroll = () => {
     if (!isTicking) {
+      // using `requestAnimationFrame` for some debouncing
+      // see: https://gist.github.com/1Marc/4770173
       window.requestAnimationFrame(() => {
       
         const scrollPosition = window.scrollY;
@@ -25,8 +27,8 @@ export const InfiniteList: React.SFC<InfiniteListProps> = ({ children, onLoadMor
           onLoadMore();
           onOverflowing();
         }
+
         setIsTicking(false);
-  
       });
     }
     setIsTicking(true);

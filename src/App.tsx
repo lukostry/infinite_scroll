@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { InfiniteList } from './components';
 import { Offer, OfferStatus } from './dto';
-import { State } from './store';
+import { OffersActionType, State } from "./store";
 
 import api from './api';
 import './App.css';
@@ -16,11 +16,13 @@ const scrollState = atom<number>({
 });
 
 const App: React.SFC = () => {
+  // redux hooks
   const dispatch = useDispatch();
-    const offersList = useSelector<State, Array<Offer>>(
-      state => state.offersReducer.offers
-    );
+  const offersList = useSelector<State, Array<Offer>>(
+    state => state.offersReducer.offers
+  );
   
+  // recoil hook
   const [scrollPosition, setScrollPosition] = useRecoilState(scrollState);
 
   const [offset, incrementOffset] = React.useState(0);
@@ -34,7 +36,7 @@ const App: React.SFC = () => {
     api<Array<Offer>>('offers', { limit: 20, offset, status: OfferStatus.Published })
       .then(
         data => {
-          dispatch({ type: 'FETCHED_OFFERS', payload: data });
+          dispatch({ type: OffersActionType.FetchedOffers, payload: data });
           incrementOffset(offset + 20);
         }
       );
@@ -43,7 +45,7 @@ const App: React.SFC = () => {
   React.useEffect(() => {
     api<Array<Offer>>('offers', { limit: 20, offset, status: OfferStatus.Published })
       .then((data) => {
-        dispatch({ type: 'FETCHED_OFFERS', payload: data });
+        dispatch({ type: OffersActionType.FetchedOffers, payload: data });
       });
     incrementOffset(offset + 20);
   }, []);
@@ -66,7 +68,8 @@ const App: React.SFC = () => {
           return (
             <p className="Offer" key={offer.id}>
               <Link to={`/offer/${offer.id}`} onClick={handleClickLink}>
-                {offer.title}
+                {/* Sometimes title can be an empty string, display description as a fallback */}
+                {offer.title || offer.description}
               </Link>
             </p>
           );
